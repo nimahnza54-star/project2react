@@ -1,0 +1,135 @@
+/* توکن‌ها و استایل سایدبار؛ مقادیر از پکیج الگو */
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --page:#f0f0f0; --rail:#fafafa; --panel:#fff; --border:#e6e6e6;
+  --text:#4c4c4c; --title:#333; --caption:#7f7f7f;
+  --hover:#f3f3f3; --sel-bg:#e0f7f7; --accent:#009595; --accent-soft:#e6f8f8;
+  --wrap:#fff; --shadow:0 4px 8px -2px rgba(0,0,0,.063);
+  --chip-m:#e0f7f7; --chip-m-t:#005b5b; --chip-s:#fff3dc; --chip-s-t:#7a4b00; --chip-c:#eeeeee; --chip-c-t:#555;
+  --tip-bg:#333; --tip-t:#fff;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --page:#121515; --rail:#181c1c; --panel:#1d2121; --border:#2c3232;
+    --text:#c9cfcf; --title:#eef1f1; --caption:#8a9494;
+    --hover:#252a2a; --sel-bg:rgba(0,186,186,.16); --accent:#33cccc; --accent-soft:rgba(0,186,186,.12);
+    --wrap:#232828; --shadow:0 4px 8px -2px rgba(0,0,0,.4);
+    --chip-m:rgba(0,186,186,.18); --chip-m-t:#7fe0e0; --chip-s:rgba(255,176,32,.16); --chip-s-t:#f3c46b; --chip-c:#2a2f2f; --chip-c-t:#aab2b2;
+    --tip-bg:#e9eded; --tip-t:#1a1d1d;
+  }
+}
+:root[data-theme="dark"]{
+  --page:#121515; --rail:#181c1c; --panel:#1d2121; --border:#2c3232;
+  --text:#c9cfcf; --title:#eef1f1; --caption:#8a9494;
+  --hover:#252a2a; --sel-bg:rgba(0,186,186,.16); --accent:#33cccc; --accent-soft:rgba(0,186,186,.12);
+  --wrap:#232828; --shadow:0 4px 8px -2px rgba(0,0,0,.4);
+  --chip-m:rgba(0,186,186,.18); --chip-m-t:#7fe0e0; --chip-s:rgba(255,176,32,.16); --chip-s-t:#f3c46b; --chip-c:#2a2f2f; --chip-c-t:#aab2b2;
+  --tip-bg:#e9eded; --tip-t:#1a1d1d;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{height:100%;margin:0;background:var(--page);color:var(--text);
+  font-family:"Vazirmatn",Tahoma,"Segoe UI",sans-serif;font-size:14px;line-height:20px}
+button,select,input{font:inherit;color:inherit}
+.ar-sidebar svg,.topbar svg{flex:none}
+
+/* #root واسط بین body و .app است؛ بدون ارتفاع ۱۰۰٪ زنجیره قطع می‌شود و سایدبار تا پایین صفحه نمی‌آید */
+#root{height:100%}
+.app{display:flex;height:100%;min-height:0}
+
+/* ---------- Sidebar ---------- */
+.ar-sidebar{display:flex;height:100%;align-self:stretch;flex:none;width:272px;position:relative;z-index:20;transition:width .2s ease-out}
+.app.collapsed .ar-sidebar{width:56px}
+.ar-aside-pmenu{width:56px;flex:none;background:var(--rail);border-inline-end:1px solid var(--border);
+  padding:12px 10px;display:flex;flex-direction:column;gap:4px;position:relative;z-index:2}
+.rail-header{display:flex;flex-direction:column;gap:4px;padding-bottom:8px;margin-bottom:4px;border-bottom:1px solid var(--border)}
+.menu-products,.menu-settings{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
+.menu-settings{margin-top:auto}
+.menu-button{position:relative;display:flex;align-items:center;justify-content:center;width:36px;height:36px;
+  border-radius:8px;color:var(--caption);text-decoration:none;background:none;border:0;cursor:pointer;transition:all .15s}
+.menu-button:hover{color:var(--title);background:var(--hover)}
+.menu-button .wrap{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;border:1px solid transparent}
+.menu-button.selected{color:var(--accent)}
+.menu-button.selected .wrap{background:var(--wrap);border-color:var(--border);box-shadow:var(--shadow)}
+.menu-button--branded .wrap{background:var(--accent);color:#fff;border-radius:9px}
+.menu-button--branded:hover{background:none}
+.menu-button[data-tip]::after{content:attr(data-tip);position:absolute;inset-inline-start:calc(100% + 10px);top:50%;
+  transform:translateY(-50%);background:var(--tip-bg);color:var(--tip-t);font-size:12px;white-space:nowrap;
+  padding:4px 8px;border-radius:6px;opacity:0;pointer-events:none;transition:opacity .12s}
+.menu-button[data-tip]:hover::after,.menu-button[data-tip]:focus-visible::after{opacity:1}
+.app:not(.collapsed) .menu-button.hide-tip-open::after{display:none}
+
+.ar-aside-menu{width:216px;flex:none;background:var(--panel);border-inline-end:1px solid var(--border);
+  display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden}
+.app.collapsed .ar-aside-menu{display:none}
+.menu-header{display:flex;align-items:center;gap:10px;height:109px;flex:none;padding:0 16px;border-bottom:1px solid var(--border)}
+.menu-header .hicon{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;
+  background:var(--accent-soft);color:var(--accent)}
+.menu-header .t{font-size:16px;font-weight:450;color:var(--title);line-height:24px}
+.menu-header .c{font-size:12px;color:var(--caption);line-height:16px}
+.menu-items__list--parent{list-style:none;margin:0;padding:12px 8px 24px;display:flex;flex-direction:column;gap:4px}
+.menu-items__item{list-style:none}
+.menu-item{display:flex;align-items:center;gap:8px;width:100%;min-height:32px;padding:6px 8px;border-radius:8px;
+  border:0;background:none;text-align:start;cursor:pointer;color:var(--title);transition:all .15s}
+.menu-item:hover{background:var(--hover)}
+.menu-item .chev{transition:transform .2s ease-out;transform:rotate(90deg);color:var(--caption)}
+.menu-item[aria-expanded="true"] .chev{transform:rotate(0deg)}
+.menu-items__list-wrapper{display:grid;grid-template-rows:0fr;transition:grid-template-rows .2s ease-out}
+.menu-items__list-wrapper--open{grid-template-rows:1fr}
+.menu-items__list--child{list-style:none;margin:0;padding:0;overflow:hidden;min-height:0;display:flex;flex-direction:column;gap:4px}
+.menu-items__list-wrapper--open .menu-items__list--child{padding-top:4px}
+.menu-item--sub-item{position:relative;display:flex;align-items:center;min-height:32px;padding:6px 8px;padding-inline-start:32px;
+  border-radius:8px;color:var(--text);text-decoration:none;transition:all .15s}
+.menu-item--sub-item:hover{background:var(--hover);color:var(--title)}
+.menu-item--sub-item--selected{background:var(--sel-bg);color:var(--title)}
+.menu-item--sub-item--selected::before{content:"";position:absolute;inset-inline-start:8px;top:8px;width:4px;height:16px;
+  border-radius:8px;background:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+
+/* ---------- Main ---------- */
+.main{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;height:100%}
+.topbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 24px;background:var(--panel);
+  border-bottom:1px solid var(--border)}
+.topbar .burger{display:none}
+.crumbs{display:flex;align-items:center;gap:6px;color:var(--caption);font-size:13px;min-width:0}
+.crumbs b{color:var(--title);font-weight:500}
+.crumbs .sep{opacity:.6}
+.controls{margin-inline-start:auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.controls label{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text)}
+.controls select{height:32px;border-radius:8px;border:1px solid var(--border);background:var(--page);padding:0 8px}
+.controls input[type=checkbox]{accent-color:var(--accent);width:16px;height:16px}
+.content{flex:1;min-height:0;overflow:auto;padding:28px 24px;display:flex;flex-direction:column}
+/* .page کل فضای افقی و عمودی محتوا را می‌گیرد؛ برای صفحات فرم از .page--narrow استفاده کنید */
+.page{flex:1;width:100%;min-height:0;display:flex;flex-direction:column}
+.page--narrow{max-width:960px}
+.page h1{margin:0 0 6px;font-size:24px;line-height:34px;font-weight:600;color:var(--title)}
+.page .sub{color:var(--caption);margin-bottom:20px}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.chip{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:999px;font-size:12px;background:var(--chip-c);color:var(--chip-c-t)}
+.chip.M{background:var(--chip-m);color:var(--chip-m-t)}
+.chip.S{background:var(--chip-s);color:var(--chip-s-t)}
+.chip code{font-family:ui-monospace,Consolas,monospace;direction:ltr}
+.placeholder{flex:1;border:1.5px dashed var(--border);border-radius:12px;background:var(--panel);min-height:260px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;color:var(--caption);text-align:center;padding:24px}
+.placeholder svg{width:36px;height:36px;color:var(--accent);opacity:.7}
+.backdrop{display:none}
+
+@media (max-width:767px){
+  .ar-sidebar{position:fixed;top:0;bottom:0;inset-inline-start:0;padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);transform:translateX(100%);transition:transform .2s ease-out;width:272px!important}
+  .app.drawer .ar-sidebar{transform:none}
+  .app.collapsed .ar-aside-menu{display:flex}
+  .rail-toggle{display:none!important}
+  .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:15}
+  .app.drawer .backdrop{display:block}
+  .topbar{padding:10px 14px}
+  .topbar .burger{display:flex}
+  .controls{margin-inline-start:0;width:100%}
+  .content{padding:20px 14px}
+  .menu-button[data-tip]::after{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.btn{align-self:flex-start;display:inline-flex;align-items:center;height:36px;padding:0 16px;border-radius:8px;background:#007070;color:#fff;text-decoration:none}
+.btn:hover{background:#005b5b}

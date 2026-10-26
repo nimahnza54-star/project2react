@@ -1,0 +1,132 @@
+{
+  "roles": [
+    { "id": "user", "label": "کاربر" },
+    { "id": "expert", "label": "کارشناس صمت" },
+    { "id": "manager", "label": "مدیر صمت" },
+    { "id": "support", "label": "پشتیبانی" }
+  ],
+  "products": [
+    { "id": "dashboard", "label": "داشبورد", "caption": "Dashboard", "icon": "layout-dashboard", "to": "/dashboard", "minRole": "expert" },
+    { "id": "weighing", "label": "توزین", "caption": "Weighing", "icon": "scale", "to": "/weighing/transactions", "minRole": "expert" },
+    { "id": "alerts", "label": "هشدارها", "caption": "Alerts", "icon": "bell", "to": "/alerts/open", "minRole": "expert" },
+    { "id": "reports", "label": "گزارش‌ها", "caption": "Reports", "icon": "file-text", "to": "/reports/compliance", "minRole": "expert" },
+    { "id": "master", "label": "اطلاعات پایه", "caption": "Master Data", "icon": "database", "to": "/master/mines", "minRole": "expert" },
+    { "id": "users", "label": "کاربران و دسترسی", "caption": "Access Control", "icon": "users", "to": "/users/list", "minRole": "manager" }
+  ],
+  "footer": [
+    { "id": "system", "label": "مدیریت سامانه", "caption": "System", "icon": "server", "to": "/system/edges", "minRole": "support" },
+    { "id": "account", "label": "حساب کاربری", "caption": "Account", "icon": "user", "to": "/account/profile", "minRole": "user" },
+    { "id": "help", "label": "راهنما", "caption": "Help", "icon": "help-circle", "to": "/help/guide", "minRole": "user" }
+  ],
+  "menus": {
+    "dashboard": [
+      { "group": "نمای کلی", "items": [
+        { "label": "خلاصه شاخص‌ها", "to": "/dashboard", "priority": "M" },
+        { "label": "روند برداشت", "to": "/dashboard/trend", "priority": "M" },
+        { "label": "مصرف پروانه", "to": "/dashboard/permits", "priority": "M" }
+      ]},
+      { "group": "نقشه", "items": [
+        { "label": "نقشه معادن و گیت‌ها", "to": "/dashboard/map", "priority": "S" }
+      ]}
+    ],
+    "weighing": [
+      { "group": "تراکنش‌ها", "items": [
+        { "label": "فهرست تراکنش‌ها", "to": "/weighing/transactions", "priority": "M" },
+        { "label": "استعلام پلاک", "to": "/weighing/plate-lookup", "priority": "S" }
+      ]},
+      { "group": "اصلاحات", "items": [
+        { "label": "تاریخچه اصلاحات", "to": "/weighing/corrections", "priority": "M" },
+        { "label": "رکوردهای حذف‌شده", "to": "/weighing/deleted", "priority": "M" },
+        { "label": "تأیید درخواست اصلاح", "to": "/weighing/approvals", "priority": "C", "minRole": "manager" }
+      ]},
+      { "group": "کیفیت داده", "items": [
+        { "label": "رکوردهای قرنطینه", "to": "/weighing/quarantine", "priority": "M", "minRole": "support" }
+      ]}
+    ],
+    "alerts": [
+      { "group": "هشدارها", "items": [
+        { "label": "هشدارهای باز", "to": "/alerts/open", "priority": "S" },
+        { "label": "همه هشدارها", "to": "/alerts/all", "priority": "S" }
+      ]},
+      { "group": "پرونده‌ها", "items": [
+        { "label": "پرونده‌های تخلف", "to": "/alerts/cases", "priority": "C" }
+      ]},
+      { "group": "تنظیمات", "items": [
+        { "label": "قواعد و آستانه‌ها", "to": "/alerts/rules", "priority": "S", "minRole": "support" }
+      ]}
+    ],
+    "reports": [
+      { "group": "گزارش‌های استاندارد", "items": [
+        { "label": "کارنامه استخراج", "to": "/reports/compliance", "priority": "M" },
+        { "label": "ریز تراکنش‌ها", "to": "/reports/transactions", "priority": "M" },
+        { "label": "اصلاحات و پلاک‌های نامنطبق", "to": "/reports/discrepancies", "priority": "S" },
+        { "label": "وضعیت اتصال گیت‌ها", "to": "/reports/gates", "priority": "S" }
+      ]},
+      { "group": "زمان‌بندی", "items": [
+        { "label": "گزارش‌های زمان‌بندی‌شده", "to": "/reports/scheduled", "priority": "C" }
+      ]}
+    ],
+    "master": [
+      { "group": "تقسیمات", "items": [
+        { "label": "استان‌ها", "to": "/master/provinces", "priority": "M" },
+        { "label": "پهنه‌ها", "to": "/master/zones", "priority": "M" },
+        { "label": "حوزه‌های استحفاظی", "to": "/master/districts", "priority": "M" }
+      ]},
+      { "group": "معادن", "items": [
+        { "label": "معادن", "to": "/master/mines", "priority": "M" },
+        { "label": "پروانه‌های بهره‌برداری", "to": "/master/permits", "priority": "M" }
+      ]},
+      { "group": "تجهیزات", "items": [
+        { "label": "باسکول‌ها و گیت‌ها", "to": "/master/scales", "priority": "M" }
+      ]},
+      { "group": "کالا و مسیر", "items": [
+        { "label": "مواد معدنی", "to": "/master/materials", "priority": "M" },
+        { "label": "مبدأ و مقصد", "to": "/master/locations", "priority": "M" }
+      ]},
+      { "group": "ناوگان", "items": [
+        { "label": "کامیون‌های مجاز", "to": "/master/trucks", "priority": "S" }
+      ]},
+      { "group": "ابزارها", "items": [
+        { "label": "درون‌ریزی از اکسل", "to": "/master/import", "priority": "S", "minRole": "manager" }
+      ]}
+    ],
+    "users": [
+      { "group": "کاربران", "items": [
+        { "label": "فهرست کاربران", "to": "/users/list", "priority": "M" },
+        { "label": "نقش‌ها و دامنه دسترسی", "to": "/users/roles", "priority": "M" }
+      ]},
+      { "group": "ممیزی", "items": [
+        { "label": "لاگ ممیزی", "to": "/users/audit", "priority": "S" },
+        { "label": "جلسات فعال", "to": "/users/sessions", "priority": "C" }
+      ]}
+    ],
+    "system": [
+      { "group": "گره‌های Edge", "items": [
+        { "label": "فهرست گره‌ها", "to": "/system/edges", "priority": "M" },
+        { "label": "افزودن گره", "to": "/system/edges/new", "priority": "M" },
+        { "label": "کلیدهای اتصال", "to": "/system/keys", "priority": "M" }
+      ]},
+      { "group": "همگام‌سازی", "items": [
+        { "label": "سلامت انتقال", "to": "/system/sync", "priority": "S" },
+        { "label": "صف و خطاها", "to": "/system/queue", "priority": "S" }
+      ]},
+      { "group": "تنظیمات", "items": [
+        { "label": "تنظیمات سراسری", "to": "/system/settings", "priority": "S" },
+        { "label": "مانیتورینگ سرویس‌ها", "to": "/system/monitoring", "priority": "S" }
+      ]}
+    ],
+    "account": [
+      { "group": "حساب من", "items": [
+        { "label": "مشخصات", "to": "/account/profile", "priority": "M" },
+        { "label": "تغییر رمز", "to": "/account/password", "priority": "M" },
+        { "label": "ورود دومرحله‌ای", "to": "/account/2fa", "priority": "S" }
+      ]}
+    ],
+    "help": [
+      { "group": "راهنما", "items": [
+        { "label": "راهنمای کاربری", "to": "/help/guide", "priority": "C" },
+        { "label": "درباره سامانه", "to": "/help/about", "priority": "C" }
+      ]}
+    ]
+  }
+}
