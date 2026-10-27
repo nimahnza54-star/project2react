@@ -1,0 +1,92 @@
+/* استایل‌های مشترک احراز هویت: صفحه انتظار بررسی نشست و کنترل‌های کاربر */
+
+.auth-loading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--page, #f0f0f0);
+  color: var(--caption, #7f7f7f);
+  direction: rtl;
+  font-family: "Vazirmatn", Tahoma, "Segoe UI", sans-serif;
+  font-size: 14px;
+}
+
+.auth-spinner {
+  color: var(--login-accent, #14532d);
+  animation: auth-spin 0.9s linear infinite;
+}
+
+@keyframes auth-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.auth-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.auth-user {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 160px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--accent-soft, rgba(20, 83, 45, 0.1));
+  color: var(--title, #333);
+  font-size: 12px;
+  line-height: 18px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.auth-user svg {
+  flex: none;
+}
+
+.auth-logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--border, #e6e6e6);
+  border-radius: 8px;
+  background: var(--panel, #fff);
+  color: var(--text, #4c4c4c);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.auth-logout:hover {
+  color: var(--login-error, #b91c1c);
+  border-color: currentColor;
+  background: var(--login-error-soft, rgba(185, 28, 28, 0.06));
+}
+
+.auth-logout:focus-visible {
+  outline: 2px solid var(--login-accent, #14532d);
+  outline-offset: 2px;
+}
+
+@media (max-width: 767px) {
+  .auth-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-spinner {
+    animation-duration: 2.4s;
+  }
+}
