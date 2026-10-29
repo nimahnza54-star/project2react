@@ -49,7 +49,7 @@ function resolveStore(options: SessionOptions): SessionStore | null {
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null;
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 function isSessionUser(value: unknown): value is SessionUser {
@@ -81,7 +81,11 @@ export function readSession(options: SessionOptions = {}): AuthSession | null {
     return null;
   }
 
-  if (!raw) return null;
+  if (raw === null) return null;
+  if (raw === '') {
+    clearSession(options);
+    return null;
+  }
 
   let parsed: unknown;
   try {

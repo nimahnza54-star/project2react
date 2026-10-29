@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { clearSession, createSession, readSession } from './session';
+import { SESSION_STORAGE_KEY, clearSession, createSession, readSession } from './session';
 import type {
   AuthCredentials,
   AuthResult,
@@ -20,20 +20,24 @@ interface AuthContextValue {
   status: AuthStatus;
   user: SessionUser | null;
   expiresAt: number | null;
+  authError: string | null;
   login: (credentials: AuthCredentials) => Promise<AuthResult>;
   logout: () => void;
+  clearAuthError: () => void;
 }
 
 interface AuthState {
   status: AuthStatus;
   user: SessionUser | null;
   expiresAt: number | null;
+  authError: string | null;
 }
 
 const INITIAL_STATE: AuthState = {
   status: 'initializing',
   user: null,
   expiresAt: null,
+  authError: null,
 };
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -51,12 +55,65 @@ export function AuthProvider({ authenticate, sessionTtlMs, children }: AuthProvi
 
   // بازیابی نشست پس از refresh. تا پایان این بررسی status برابر initializing است.
   useEffect(() => {
-    const session = readSession();
-    setState(
-      session
-        ? { status: 'authenticated', user: session.user, expiresAt: session.expiresAt }
-        : { status: 'unauthenticated', user: null, expiresAt: null },
-    );
+    const syncSession = () => {
+      let hadStoredSession = false;
+      try {
+        if (typeof window !== 'undefined') {
+          hadStoredSession = Boolean(window.sessionStorage.getItem(SESSION_STORAGE_KEY));
+        }
+      } catch {
+        hadStoredSession = false;
+      }
+
+      const session = readSession();
+      if (session) {
+        setState((prev) =>
+          prev.status === 'authenticated' &&
+          prev.user?.username === session.user.username &&
+          prev.expiresAt === session.expiresAt &&
+          prev.authError === null
+            ? prev
+            : { status: 'authenticated', user: session.user, expiresAt: session.expiresAt, authError: null },
+        );
+      } else {
+        setState((prev) => {
+          const nextAuthError = hadStoredSession
+            ? 'نشست شما نامعتبر یا منقضی شده است. لطفاً دوباره وارد شوید.'
+            : prev.authError;
+          if (
+            prev.status === 'unauthenticated' &&
+            prev.user === null &&
+            prev.expiresAt === null &&
+            prev.authError === nextAuthError
+          ) {
+            return prev;
+          }
+          return { status: 'unauthenticated', user: null, expiresAt: null, authError: nextAuthError };
+        });
+      }
+    };
+
+    syncSession();
+
+    if (typeof window === 'undefined') return;
+
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === null || event.key === SESSION_STORAGE_KEY) syncSession();
+    };
+    const handleFocus = () => syncSession();
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') syncSession();
+    };
+
+    window.addEventListener('storage', handleStorage);
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
   }, []);
 
   const login = useCallback(
@@ -81,15 +138,34 @@ export function AuthProvider({ authenticate, sessionTtlMs, children }: AuthProvi
         };
       }
 
-      setState({ status: 'authenticated', user: session.user, expiresAt: session.expiresAt });
+      setState({ status: 'authenticated', user: session.user, expiresAt: session.expiresAt, authError: null });
       return { success: true, user: session.user };
     },
     [authenticate, sessionTtlMs],
   );
 
   const logout = useCallback(() => {
+    try {
+      clearSession();
+    } catch {
+      // Storage cleanup must never leave the UI authenticated.
+    } finally {
+      setState({ status: 'unauthenticated', user: null, expiresAt: null, authError: null });
+    }
+  }, []);
+
+  const expireSession = useCallback(() => {
     clearSession();
-    setState({ status: 'unauthenticated', user: null, expiresAt: null });
+    setState({
+      status: 'unauthenticated',
+      user: null,
+      expiresAt: null,
+      authError: 'نشست شما منقضی شده است. لطفاً دوباره وارد شوید.',
+    });
+  }, []);
+
+  const clearAuthError = useCallback(() => {
+    setState((prev) => (prev.authError === null ? prev : { ...prev, authError: null }));
   }, []);
 
   // انقضای نشست حتی بدون refresh: پس از پایان اعتبار، state به unauthenticated می‌رود
@@ -99,23 +175,25 @@ export function AuthProvider({ authenticate, sessionTtlMs, children }: AuthProvi
 
     const remaining = state.expiresAt - Date.now();
     if (remaining <= 0) {
-      logout();
+      expireSession();
       return;
     }
 
-    const timer = window.setTimeout(logout, remaining);
+    const timer = window.setTimeout(expireSession, remaining);
     return () => window.clearTimeout(timer);
-  }, [state.status, state.expiresAt, logout]);
+  }, [state.status, state.expiresAt, expireSession]);
 
   const value = useMemo<AuthContextValue>(
     () => ({
       status: state.status,
       user: state.user,
       expiresAt: state.expiresAt,
+      authError: state.authError,
       login,
       logout,
+      clearAuthError,
     }),
-    [state.status, state.user, state.expiresAt, login, logout],
+    [state.status, state.user, state.expiresAt, state.authError, login, logout, clearAuthError],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

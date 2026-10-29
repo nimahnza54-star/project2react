@@ -11,7 +11,11 @@ export function AuthControls() {
   if (!user) return null;
 
   const handleLogout = () => {
-    logout();
+    try {
+      logout();
+    } catch {
+      // State cleanup is handled by AuthProvider; still leave the login screen.
+    }
     navigate('/login', { replace: true });
   };
 

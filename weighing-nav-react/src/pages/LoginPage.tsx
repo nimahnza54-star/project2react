@@ -1,5 +1,5 @@
-import { useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState, type FormEvent } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Eye, EyeOff, Lock, User } from 'lucide-react';
 import { useAuth } from '../auth';
 import './LoginPage.css';
@@ -16,14 +16,29 @@ interface FormErrors {
 
 const EMPTY_ERRORS: FormErrors = { username: '', password: '' };
 
+interface LoginLocationState {
+  from?: string;
+  message?: string;
+}
+
 export function LoginPage() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const location = useLocation();
+  const { login, authError, clearAuthError } = useAuth();
+  const [redirectMessage, setRedirectMessage] = useState<string | null>(
+    () => authError ?? (location.state as LoginLocationState | null)?.message ?? null,
+  );
+
+  useEffect(() => {
+    clearAuthError();
+  }, [clearAuthError]);
   const [formData, setFormData] = useState<FormData>({ username: '', password: '' });
   const [errors, setErrors] = useState<FormErrors>(EMPTY_ERRORS);
   const [showPassword, setShowPassword] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const visibleError = serverError ?? redirectMessage;
 
   const validate = (): boolean => {
     const next: FormErrors = { ...EMPTY_ERRORS };
@@ -63,7 +78,15 @@ export function LoginPage() {
         return;
       }
 
-      navigate('/', { replace: true });
+      const target = (location.state as LoginLocationState | null)?.from;
+      const safeTarget =
+        typeof target === 'string' &&
+        target.startsWith('/') &&
+        !target.startsWith('//') &&
+        target !== '/login'
+          ? target
+          : '/';
+      navigate(safeTarget, { replace: true });
     } catch {
       setServerError('خطای غیرمنتظره‌ای رخ داد. لطفا دوباره تلاش کنید.');
     } finally {
@@ -74,6 +97,7 @@ export function LoginPage() {
   const handleChange = (key: keyof FormData, value: string) => {
     setFormData((prev) => ({ ...prev, [key]: value }));
     if (serverError) setServerError(null);
+    if (redirectMessage) setRedirectMessage(null);
     if (errors[key]) {
       setErrors((prev) => ({ ...prev, [key]: '' }));
     }
@@ -171,9 +195,9 @@ export function LoginPage() {
             )}
           </div>
 
-          {serverError && (
+          {visibleError && (
             <div className="login-server-error" role="alert">
-              {serverError}
+              {visibleError}
             </div>
           )}
 

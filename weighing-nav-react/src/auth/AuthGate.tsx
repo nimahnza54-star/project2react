@@ -14,12 +14,20 @@ function SessionLoading() {
 
 /** مسیرهای محافظت‌شده: تا پایان بررسی نشست هیچ محتوایی نمایش داده نمی‌شود. */
 export function RequireAuth() {
-  const { status } = useAuth();
+  const { status, authError } = useAuth();
   const location = useLocation();
 
   if (status === 'initializing') return <SessionLoading />;
   if (status === 'unauthenticated') {
-    return <Navigate to="/login" replace state={{ from: location.pathname + location.search }} />;
+    const message =
+      authError ?? 'برای دسترسی به این صفحه باید وارد شوید.';
+    return (
+      <Navigate
+        to="/login"
+        replace
+        state={{ from: location.pathname + location.search, message }}
+      />
+    );
   }
   return <Outlet />;
 }
